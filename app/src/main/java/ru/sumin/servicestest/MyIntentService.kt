@@ -17,12 +17,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MyIntentService: IntentService(NAME) {
+class MyIntentService : IntentService(NAME) {
 
     override fun onCreate() {
         super.onCreate()
         log("onCreate")
-        setIntentRedelivery(true)
+        setIntentRedelivery(false)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
     }
@@ -56,21 +56,20 @@ class MyIntentService: IntentService(NAME) {
         }
     }
 
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Title")
-            .setContentText("Text")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .build()
-    }
+    private fun createNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
+        .setContentTitle("Title")
+        .setContentText("Text")
+        .setSmallIcon(R.drawable.ic_launcher_background)
+        .build()
 
     companion object {
+
         private const val CHANNEL_ID = "channel_id"
         private const val CHANNEL_NAME = "channel_name"
         private const val NOTIFICATION_ID = 1
         private const val NAME = "MyIntentService"
 
-        fun newIntent(context: Context ): Intent {
+        fun newIntent(context: Context): Intent {
             return Intent(context, MyIntentService::class.java)
         }
     }

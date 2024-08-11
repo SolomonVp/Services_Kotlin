@@ -38,7 +38,7 @@ class MyService: Service() {
         log("onDestroy")
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder? {
         TODO("Not yet implemented")
     }
 
@@ -54,6 +54,5 @@ class MyService: Service() {
                 putExtra(EXTRA_START, start)
             }
         }
-
     }
 }
