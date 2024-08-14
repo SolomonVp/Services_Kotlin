@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,17 +18,16 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MyIntentService2 : IntentService(NAME) {
+class MyJobIntentService : JobIntentService() {
 
     override fun onCreate() {
         super.onCreate()
         log("onCreate")
-        setIntentRedelivery(true)
     }
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onHandleWork(intent: Intent) {
         log("onHandleIntent")
-        val page = intent?.getIntExtra(PAGE, 0) ?: 0
+        val page = intent.getIntExtra(PAGE, 0)
         for (i in 0 until 5) {
             Thread.sleep(1000)
             log("Timer $i $page")
@@ -40,18 +40,24 @@ class MyIntentService2 : IntentService(NAME) {
     }
 
     private fun log(message: String) {
-        Log.d("SERVICE_TAG", "MyIntentService2: $message")
+        Log.d("SERVICE_TAG", "MyJobIntentService: $message")
     }
 
     companion object {
-
-
-
-        private const val NAME = "MyIntentService"
         private const val PAGE = "page"
+        private const val JOB_ID = 111
 
-        fun newIntent(context: Context, page: Int): Intent {
-            return Intent(context, MyIntentService2::class.java).apply {
+        fun enqueue(context: Context, page: Int) {
+            enqueueWork(
+                context,
+                MyJobIntentService::class.java,
+                JOB_ID,
+                newIntent(context, page)
+            )
+        }
+
+        private fun newIntent(context: Context, page: Int): Intent {
+            return Intent(context, MyJobIntentService::class.java).apply {
                 putExtra(PAGE, page)
             }
         }
